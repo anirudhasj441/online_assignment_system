@@ -103,9 +103,12 @@ def assignment(request,slug):
 def assignmentStatus(request,slug):
   if request.user.is_authenticated:
     if extras.has_group(request.user,'Teacher'):
+      solved = []
       assignment = Assignment.objects.get(slug=slug)
       student = Student.objects.filter(s_class=assignment.ass_class)
       log = AssignmentsLog.objects.filter(assignment=assignment).order_by("-submit_on")
+      solved_log = AssignmentsLog.objects.filter(assignment=assignment).values_list('student')
+      unsolved = Student.objects.filter(s_class=assignment.ass_class).exclude(user__in=solved_log)
       file = File.objects.filter(assignment=assignment)
       count_student = len(student)
       solved_student = len(log)
@@ -117,6 +120,8 @@ def assignmentStatus(request,slug):
         'media':settings.MEDIA_URL,
         'count_student':count_student,
         'solved_student':solved_student,
+        'unsolved':unsolved,
+        'students':student,
       }
       return render(request,'teacher/assignment_status.html',params)
     else:
@@ -191,4 +196,3 @@ def addNotificationForTeacher(sender,instance,created,**kwargs):
       student = instance.student,
       teacher = teacher
     )
-  print("updated")

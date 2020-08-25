@@ -39,6 +39,24 @@
         animation: show 0.5s ease-in-out forwards;
     }
 
+    #solved{
+        position: relative;
+        top: 0;
+        left: 0;
+    }
+    #unsolved{
+        position: relative;
+        top: 0;
+        left: 0;
+        display: none;
+    }
+    #total{
+        position: relative;
+        top: 0;
+        left: 0;
+        display: none;
+    }
+
     @keyframes show {
         0% {
             transform: translateY(50px);
@@ -68,7 +86,7 @@
     <h2 class="text-center">{{assignment.topic}}</h2>
     <div class="row mt-5">
         <div class="col-lg-6 col-md-6 col-sm-12">
-            <h5><strong>Topic:</strong>{{assignment.topic}}</h5>
+            <h5><strong>Subject:</strong>{{assignment.subject.subject_name}}</h5>
             <h5><strong>Class:</strong>{{assignment.ass_class}}</h5>
             <h5><strong>Date:</strong>{{assignment.date}}</h5>
             <h5><strong>Type:</strong>{{assignment.ass_type}}</h5>
@@ -83,82 +101,144 @@
             <span id="show-per"></span>
         </div>
     </div>
-    {% if assignment.ass_type == "MCQ" %}
-    <div class="table-responsive  my-4">
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Student Name</th>
-                    <th>Control No</th>
-                    <th>Attemp</th>
-                    <th>Correct</th>
-                    <th>Submit On</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for detail in log %}
-                <tr>
-                    {% load humanize %}
-                    <th>{{forloop.counter}}</th>
-                    <td>{{detail.student.first_name}} {{detail.student.last_name}}</td>
-                    <td>{{detail.student.username}}</td>
-                    <td>{{detail.result.attemp}}</td>
-                    <td>{{detail.result.correct}}</td>
-                    <td>{{detail.submit_on | naturaltime}}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <div class="filter-button my-3 text-right">
+        <button class="btn btn-sm btn-primary" onclick="showTotal()">Total</button>
+        <button class="btn-sm btn btn-primary" onclick="showSolved()">Solved</button>
+        <button class="btn btn-sm btn-primary" onclick="showUnsolved()">Unsolved</button>
     </div>
-    {% else %}
-    <div class="table-responsive">
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Student Name</th>
-                    <th>Control No</th>
-                    <th>Submit On</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for detail in log %}
-                <tr>
-                    <th scope="col">{{forloop.counter}}</th>
-                    <td>{{detail.student.first_name}} {{detail.student.last_name}}</td>
-                    <td>{{detail.student.username}}</td>
-                    <td>{{detail.submit_on | naturaltime}}</td>
-                    <td><button onclick="showQue()" class="btn btn-sm btn-primary">View</button></td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    <div class="questions" id="que">
-        <div class="table-responsive p-5 mx-auto bg-light" style="width: 60%;">
-            <table class="table table-sm table-hover table-white ">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Questions</th>
-                        <th>File</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for question in file %}
-                    <tr>
-                        <th>{{forloop.counter}}</th>
-                        <td>{{question.question | safe |slice:":30"}}</td>
-                        <td><a href="{{media}}{{question.file}}" class="text-success"><i class="fa fa-2x fa-file"></i></a></td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+    <div class="students">
+        <div id="solved">
+            {% if assignment.ass_type == "MCQ" %}
+            <div class="table-responsive  my-4">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Student Name</th>
+                            <th>Control No</th>
+                            <th>Attemp</th>
+                            <th>Correct</th>
+                            <th>Submit On</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for detail in log %}
+                        <tr>
+                            {% load humanize %}
+                            <th>{{forloop.counter}}</th>
+                            <td>{{detail.student.first_name}} {{detail.student.last_name}}</td>
+                            <td>{{detail.student.username}}</td>
+                            <td>{{detail.result.attemp}}</td>
+                            <td>{{detail.result.correct}}</td>
+                            <td>{{detail.submit_on | naturaltime}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Student Name</th>
+                            <th>Control No</th>
+                            <th>Submit On</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for detail in log %}
+                        <tr>
+                            <th scope="col">{{forloop.counter}}</th>
+                            <td>{{detail.student.first_name}} {{detail.student.last_name}}</td>
+                            <td>{{detail.student.username}}</td>
+                            <td>{{detail.submit_on | naturaltime}}</td>
+                            <td><button onclick="showQue()" class="btn btn-sm btn-primary">View</button></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="questions" id="que">
+                <div class="table-responsive p-5 mx-auto bg-light" style="width: 60%;">
+                    <table class="table table-sm table-hover table-white ">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Questions</th>
+                                <th>File</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for question in file %}
+                            <tr>
+                                <th>{{forloop.counter}}</th>
+                                <td>{{question.question | safe |slice:":30"}}</td>
+                                <td><a href="{{media}}{{question.file}}" class="text-success"><i
+                                            class="fa fa-2x fa-file"></i></a></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        <div id="unsolved">
+            <div class="table-responsive my-4">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Student Name</th>
+                            <th>Roll No.</th>
+                            <th>Class</th>
+                            <th>Control Number</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for stud in unsolved %}
+                            <tr>
+                                <th>{{forloop.counter}}</th>
+                                <td>{{stud.user.first_name}} {{stud.user.last_name}}</td>
+                                <td>{{stud.s_roll}}</td>
+                                <td>{{stud.s_class.class_name}}</td>
+                                <td>{{stud.user.username}}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div id="total">
+            <div class="table-responsive my-4">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Student Name</th>
+                            <th>Roll No.</th>
+                            <th>Class</th>
+                            <th>Control Number</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for stud in students %}
+                            <tr>
+                                <th>{{forloop.counter}}</th>
+                                <td>{{stud.user.first_name}} {{stud.user.last_name}}</td>
+                                <td>{{stud.s_roll}}</td>
+                                <td>{{stud.s_class.class_name}}</td>
+                                <td>{{stud.user.username}}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
-    {% endif %}
 </div>
 {% endblock body %}
 {% block script %}
@@ -169,9 +249,6 @@
     var progress = document.getElementById("progress")
     progress.style.width = per + "%";
     progress.style.display = "initial";
-    console.log(solved);
-    console.log(total);
-    console.log(per);
     document.getElementById("show-per").innerHTML = per + "%";
     if (per < 40) {
         progress.style.backgroundColor = "red";
@@ -180,9 +257,26 @@
         if (document.getElementById("que").style.display == "none") {
             document.getElementById("que").style.display = "initial";
         }
-        else{
+        else {
             document.getElementById("que").style.display = "none";
         }
+    }
+</script>
+<script>
+    function showSolved(){
+        document.getElementById("solved").style.display = "initial";
+        document.getElementById("unsolved").style.display = "none";
+        document.getElementById("total").style.display = "none";
+    }
+    function showUnsolved(){
+        document.getElementById("unsolved").style.display = "initial";
+        document.getElementById("solved").style.display = "none";
+        document.getElementById("total").style.display = "none";
+    }
+    function showTotal(){
+        document.getElementById("total").style.display = "initial";
+        document.getElementById("unsolved").style.display = "none";
+        document.getElementById("solved").style.display = "none";
     }
 </script>
 {% endblock script %}

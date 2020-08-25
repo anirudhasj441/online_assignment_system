@@ -98,7 +98,7 @@
       max-width: 90vw;
       height: max-content;
       max-height: 80vh;
-      overflow-y: scroll;
+      overflow-y: auto;
       overflow-x: hidden;
     }
 
@@ -234,7 +234,7 @@
           {% for notification in notifications %}
           <div class="row">
             <div class="col-12">
-              <h5><a href="/student/assignment/{{notification.slug}}" class="nav-link">New Assignment for
+              <h5><a href="/student/assignment/{{notification.assignment.slug}}" class="nav-link">New Assignment for
                   {{notification.assignment.subject.subject_name}} by {{notification.assignment.teacher.first_name}}
                   {{notification.assignment.teacher.last_name}}</a></h5>
               {% load humanize %}
@@ -248,8 +248,11 @@
         </div>
       </div>
       {% elif request.user|has_group:"Teacher" %}
+      <div class="d-lg-none">
+        <a href="{% url 'add_assignment'%}" class="nav-link m-0 p-0" style="width: 0;"><i class="fa fa-plus"></i></a>
+      </div>
       <div class="dropdown d-lg-none show">
-        <a class="dropdown-toggle nav-link" style="width: fit-content; " href="#" role="button" id="dropdownMenuLink"
+        <a class="dropdown-toggle nav-link ml-2 pr-0" style="width: fit-content; " href="#" role="button" id="dropdownMenuLink"
           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <i class="fa fa-bell"></i>
         </a>
@@ -259,7 +262,7 @@
           {% for notification in notifications %}
           <div class="row">
             <div class="col-12">
-              <h5><a href="/teacher/assignment_status/{{notification.assignment.sug}}"
+              <h5><a href="/teacher/assignment_status/{{notification.assignment.slug}}"
                   class="nav-link">{{notification.student.first_name}} {{notification.student.last_name}} submited
                   {{notification.assignment.subject.subject_name}} assignment of
                   {{notification.assignment.ass_class}}</a></h5>
@@ -331,7 +334,7 @@
               {% for notification in notifications %}
               <div class="row">
                 <div class="col-12">
-                  <h5><a href="/student/assignment/{{notification.slug}}" class="nav-link">New Assignment for
+                  <h5><a href="/student/assignment/{{notification.assignment.slug}}" class="nav-link">New Assignment for
                       {{notification.assignment.subject.subject_name}} by {{notification.assignment.teacher.first_name}}
                       {{notification.assignment.teacher.last_name}}</a></h5>
                   {% load humanize %}
@@ -355,7 +358,7 @@
           {% for notification in notifications %}
           <div class="row">
             <div class="col-12">
-              <h5><a href="/teacher/assignment_status/{{notification.assignment.sug}}"
+              <h5><a href="/teacher/assignment_status/{{notification.assignment.slug}}"
                   class="nav-link">{{notification.student.first_name}} {{notification.student.last_name}} submited
                   {{notification.assignment.subject.subject_name}} assignment of
                   {{notification.assignment.ass_class}}</a></h5>

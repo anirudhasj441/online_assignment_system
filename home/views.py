@@ -3,6 +3,8 @@ from django.contrib.auth.models import User,Group
 from django.contrib.auth import authenticate,login,logout
 from .templatetags import extras
 from django.contrib import messages
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
 from .models import Student,Teacher,Class
 from django.db import IntegrityError
 import sys
@@ -81,7 +83,7 @@ def studRegister(request):
       if user_created:
         user.delete()
       messages.error(request,sys.exc_info()[0])
-      print(sys.exc_info()[0])
+      
       
     else:
       messages.success(request,'Registration Successfull')
@@ -163,8 +165,6 @@ def studLogin(request):
         messages.success(request,'Welcome '+user.first_name+' '+user.last_name)
       else:
         messages.error(request,'Invalid Credentials')
-    
-      
   return render(request,'home/stud_login.html')
 
 def teacherLogin(request):
@@ -179,13 +179,20 @@ def teacherLogin(request):
         login(request,user)
         return redirect('teacher/')
         messages.success(request,'Welcome '+user.first_name+' '+user.last_name)
-        
       else:
         messages.error(request,'Invalid Credentials')
-    
-      
   return render(request,'home/teacher_login.html')
 
+# APIs
 def userLogout(request):
   logout(request)
   return redirect('/')
+
+# signals(Triggers)
+@receiver(post_delete,sender=Student)
+def deleteStudentUser(sender,instance,*args, **kwargs):
+  user = User.objects.get(username=instance.user.username).delete()
+
+@receiver(post_delete,sender=Teacher)
+def deleteTeacherUser(sender,instance,*args,**kwargs):
+  user = User.objects.get(username=instance.user.username).delete()

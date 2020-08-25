@@ -18,16 +18,18 @@ class Student(models.Model):
   s_roll = models.IntegerField()
   s_class = models.ForeignKey(Class,on_delete=models.CASCADE,null=True,blank=True)
   s_dob = models.DateField(null=True,blank=True)
-  s_contact = models.IntegerField()
-  s_gender = models.CharField(max_length=50)
+  s_contact = models.IntegerField(null=True,blank=True)
+  s_gender = models.CharField(max_length=50,null=True,blank=True)
+  updated = models.BooleanField(null=True,default=True)
   def __str__(self):
     return str(self.pk)
     
 class Teacher(models.Model):
   user = models.ForeignKey(User,on_delete=models.CASCADE)
   t_dob = models.DateField(null=True,blank=True)
-  t_contact = models.IntegerField()
-  t_gender = models.CharField(max_length=50)
+  t_contact = models.IntegerField(null=True)
+  t_gender = models.CharField(max_length=50,null=True)
+  updated = models.BooleanField(null=True,default=True)
   def __str__(self):
     return str(self.pk)
 

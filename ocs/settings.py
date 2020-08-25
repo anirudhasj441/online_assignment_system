@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'assignment.apps.AssignmentConfig',
     'student.apps.StudentConfig',
     'teacher.apps.TeacherConfig',
+    'adminportal.apps.AdminportalConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
